@@ -1,0 +1,40 @@
+# dependencies
+node_modules/
+
+# secrets / env
+.env
+.env.*
+
+# runtime data
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+lexiang.hnsw*
+uploads/
+public/uploads/
+public/exports/
+backups/
+logs/
+*.log
+server.out
+
+# backups & snapshots
+*.bak-*
+*.bak.*
+.rollback-snapshots/
+public.bak-*/
+
+# agent workspaces
+.codex/*
+!.codex/skills/
+!.codex/skills/**
+.claude/
+.codex-backups/
+
+# macOS
+.DS_Store
+
+# Vue 构建产物（由 vue-app 构建生成，不入库）
+public/admin-vue/
+
