@@ -1,0 +1,208 @@
+<div id="demo_banner">静态演示快照 · 数据截至 <span id="demo_ts"></span> · 仅展示，写操作不可用</div>
+<div class="app">
+  <!-- 侧边栏（白底·仿联想乐享） -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">联想</div>
+      <b>联想乐享</b>
+      <span class="mobile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
+    </div>
+    <nav class="nav" id="nav">
+      <button data-tab="dash" class="active"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>数据总览</span><span class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button data-tab="rules"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h4"/></svg></span><span>巡检规则</span><span class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button data-tab="work"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.3L3 18l3 3 6.4-6.3a4 4 0 0 0 5.3-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z"/></svg></span><span>问题处理</span><span class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button data-tab="notify"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span><span>通知记录</span><span class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+      <button data-tab="logs"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M9 12h6"/><path d="M9 16h6"/></svg></span><span>运行日志</span><span class="ch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    </nav>
+    <div class="side-foot">
+      <span class="logout">⎋ 退出</span>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="breadcrumb" id="breadcrumb">
+        <span class="crumb-tab" data-tab="home"><span>联想乐享·AI巡检</span><span class="x">×</span></span>
+      </div>
+      <div class="top-actions">
+        <span class="role-label">当前角色</span>
+        <select id="role_sel" class="role-sel" onchange="setRole(this.value)" title="切换角色以演示权限区分">
+          <option value="admin">管理员</option>
+          <option value="operation">运营</option>
+        </select>
+        <button class="btn ghost sm" onclick="loadDash()">刷新</button>
+        <button class="btn sm" style="background:var(--primary)" onclick="api('/api/run-all','POST',{}).then(r=>toast('已触发全量巡检：'+r.done+' 个任务'))">立即全量巡检</button>
+        <span class="ai-helper" title="AI 助手（演示）">✨ AI 助手</span>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- 巡检规则 -->
+      <section class="panel" id="rules">
+        <div class="page-header">
+          <div class="ph-title"><span class="ph-bar"></span><h3>巡检规则配置</h3></div>
+          <button class="btn primary sm" onclick="openTask()">+ 新增规则</button>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>ID</th><th>页面 / 模块</th><th>巡检项</th><th>频率</th><th>状态</th><th>最近执行</th><th>操作</th></tr></thead>
+          <tbody id="rules_body"></tbody></table>
+        </div>
+        <div class="pagination">
+          <span class="total">共 <b id="rules_total">0</b> 条</span>
+          <button class="page-btn" disabled>‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn" disabled>›</button>
+          <span class="go-page">前往 <input type="number" min="1" value="1"> 页</span>
+        </div>
+      </section>
+
+      <!-- 数据驾驶舱 -->
+      <section class="panel show" id="dash">
+        <div class="page-header">
+          <div class="ph-title"><span class="ph-bar"></span><h3>数据总览</h3></div>
+          <span class="muted">实时掌握风险动态</span>
+        </div>
+        <div class="grid kpis" style="margin-bottom:16px">
+          <div class="card" style="--accent:#16A34A;--accent-soft:#E7F7EE"><div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg></div><div class="k">巡检健康率<span class="help-tip" onclick="event.stopPropagation()">?<span class="help-pop"><span class="hp-title">巡检健康率</span>健康率 = (正常 + 部分正常) ÷ 总任务数 × 100%。<br>取每个任务<b>最近一次</b>巡检结果进行统计：pass 计为正常，partial 计为部分正常，fail 计为异常。</span></span></div><div class="v" id="st_rate">–<small>%</small></div><div class="sub" id="st_health_sub">—</div></div>
+          <div class="card" style="--accent:#DC2626;--accent-soft:#FDECEC;cursor:pointer" onclick="gotoWork({level:'critical'})"><div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L21 20 H3 Z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17" x2="12" y2="17.4"/></svg></div><div class="k">严重异常 (P1)<span class="help-tip" onclick="event.stopPropagation()">?<span class="help-pop"><span class="hp-title">严重异常 (P1)</span>统计最近一次巡检中等级为<b>「严重」(critical)</b> 的任务数。<br>严重等级包括：链接 404、商品售罄仍展示、活动过期、裂图等阻断性问题。点击卡片可跳转对应问题。</span></span></div><div class="v" id="st_fail">–</div><div class="sub" id="st_sev_sub">—</div></div>
+          <div class="card" style="--accent:#D97706;--accent-soft:#FEF4E2;cursor:pointer" onclick="gotoWork({status:'pending'})"><div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/></svg></div><div class="k">待处理问题<span class="help-tip" onclick="event.stopPropagation()">?<span class="help-pop"><span class="hp-title">待处理问题</span>统计数据中状态为<b>「待处理」(pending)</b> 的问题数量。<br>问题在巡检发现异常时自动生成。点击卡片可跳转问题列表筛选查看。</span></span></div><div class="v" id="st_wo">–</div><div class="sub" id="st_wo_sub">—</div></div>
+          <div class="card" style="--accent:#2D7FF9;--accent-soft:#E8F1FF;cursor:pointer" onclick="gotoWork({status:'resolved'})"><div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#2D7FF9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></div><div class="k">整改完成率<span class="help-tip" onclick="event.stopPropagation()">?<span class="help-pop"><span class="hp-title">整改完成率</span>整改完成率 = 已解决问题 ÷ 全部问题 × 100%。<br>全部问题 = 待处理 + 处理中 + 已解决。<br>点击卡片可跳转查看已解决问题列表。</span></span></div><div class="v" id="st_resolve_rate">–<small>%</small></div><div class="sub" id="st_resolve_sub">—</div></div>
+          <div class="card" id="card_run" style="--accent:#7F77DD;--accent-soft:#EEEDFE;cursor:pointer" onclick="switchTab('logs')"><div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#7F77DD" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg></div><div class="k">今日巡检次数<span class="help-tip" onclick="event.stopPropagation()">?<span class="help-pop"><span class="hp-title">今日巡检次数</span>统计今日（按本地日期）results 表中的巡检记录数。<br>任务总数包含<b>已启用和已禁用</b>的全部任务。点击卡片可查看运行日志。</span></span></div><div class="v" id="st_run">–</div><div class="sub">任务总数 <span id="st_tasks">–</span></div></div>
+        </div>
+        <!-- 走势与构成：长期健康趋势 + 问题类型构成 -->
+        <div class="sec-eyebrow">走势与构成</div>
+        <div class="grid row2" style="margin-bottom:16px">
+          <div class="box"><h3><span class="ic"></span>近 7 天健康率趋势<span class="help-tip">?<span class="help-pop"><span class="hp-title">近 7 天健康率趋势</span>按天统计最近 7 天每天的健康率（正常 + 部分正常 ÷ 当日总任务数），折线图展示趋势变化。<br>若某天无巡检记录则不计入。</span></span></h3><div id="trend"></div></div>
+          <div class="box"><h3><span class="ic"></span>高频问题类型<span class="help-tip">?<span class="help-pop"><span class="hp-title">高频问题类型</span>按巡检维度聚合问题项数量，以环形图展示各类型占比。<br>每个扇区标记类型简称和异常数（占比<8% 不显示标签）。<br><b>红色</b> = 含严重项 / <b>橙色</b> = 仅警告项。<br>中心数字为异常项总数。</span></span></h3><div id="top_issues"></div></div>
+        </div>
+        <!-- 风险聚焦：页面排行 + 各维度数量 -->
+        <div class="sec-eyebrow">风险聚焦</div>
+        <div class="grid row2" style="margin-bottom:16px">
+          <div class="box"><h3><span class="ic"></span>高频发问题页面排行（点击跳转未解决问题）<span class="help-tip">?<span class="help-pop"><span class="hp-title">高频发问题页面排行</span>按<b>页面</b>聚合未解决问题（待处理 + 处理中）数量，取前 8 名。<br>点击可跳转对应<b>页面</b>的未解决问题。</span></span></h3><div class="rank" id="ranking"></div></div>
+          <div class="box"><h3><span class="ic"></span>各类异常数量（点击跳转未解决问题）
+            <span class="seg" style="margin-left:auto" id="check_range_seg">
+              <button class="on" data-r="all" onclick="switchCheckRange('all',this)">全部</button>
+              <button data-r="7d" onclick="switchCheckRange('7d',this)">最近7天</button>
+            </span>
+            <span class="help-tip">?<span class="help-pop"><span class="hp-title">各类异常数量</span>按巡检维度（链接有效性 / 售罄下架 / 活动时效 / 图片加载 / 图文一致性 / 互动奖品特效）聚合最近一次巡检中<b>警告 + 严重</b>的问题项数量。<br>支持时间切换：<b>全部</b> = 所有巡检任务的最近一次结果；<b>最近7天</b> = 仅纳入最近一次执行在 7 天内的任务。<br>点击柱形可跳转对应<b>故障类型</b>的未解决问题（待处理 + 处理中）。</span></span></h3><div id="chart_check"></div></div>
+        </div>
+        <!-- 行动闭环：待办问题 + 通知 -->
+        <div class="sec-eyebrow">行动闭环</div>
+        <div class="grid row2">
+          <div class="box" id="box_wo_status"><h3><span class="ic"></span>待处理 / 处理中问题<span class="help-tip up">?<span class="help-pop"><span class="hp-title">待处理 / 处理中问题</span>实时列出状态为 <b>待处理</b> 与 <b>处理中</b> 的未闭环问题，按创建时间升序（存在最久的在前）。<br>点击任一问题可下钻查看详情。<br>颜色：<b style="color:#DC2626">红=待处理</b> / <b style="color:#D97706">橙=处理中</b>。</span></span></h3><div id="wo_status"></div>
+            <button class="btn gray sm" style="margin-top:6px" onclick="switchTab('work')">前往问题处理</button></div>
+          <div class="box" id="box_notify"><h3><span class="ic"></span>通知动态<span class="help-tip up">?<span class="help-pop"><span class="hp-title">通知动态</span>展示最近 5 条通知记录，按时间倒序排列。<br>巡检发现 警告 / 严重 异常时，自动按任务配置的渠道（站内信 / 邮件 / 短信 / 企业微信）派发通知。</span></span></h3><div id="notify_preview"></div>
+            <button class="btn gray sm" style="margin-top:6px" onclick="switchTab('notify')">查看全部通知</button></div>
+        </div>
+      </section>
+
+      <!-- 问题处理 -->
+      <section class="panel" id="work">
+        <div class="page-header">
+          <div class="ph-title"><span class="ph-bar"></span><h3>AI 巡检总览摘要</h3></div>
+          <button class="btn gray sm" id="copy_summary" onclick="copySummary()">一键复制</button>
+        </div>
+        <div class="box" style="margin-bottom:16px">
+          <div class="wo-summary" id="wo_summary"></div>
+        </div>
+        <div class="page-header">
+          <div class="ph-title"><span class="ph-bar"></span><h3>问题处理</h3></div>
+          <span class="filter-count" id="wo_count"></span>
+        </div>
+        <div class="filter-bar" id="wo_filters">
+            <div class="filter-item">
+              <label for="wo_status_sel">状态</label>
+              <select id="wo_status_sel">
+                <option value="all">全部状态</option>
+                <option value="pending,in_progress">未解决（待处理+处理中）</option>
+                <option value="pending">待处理</option>
+                <option value="in_progress">处理中</option>
+                <option value="resolved">已解决</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="wo_level_sel">异常等级</label>
+              <select id="wo_level_sel">
+                <option value="all">全部等级</option>
+                <option value="critical">严重</option>
+                <option value="warning">警告</option>
+                <option value="notice">提示</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="wo_site_sel">页面</label>
+              <select id="wo_site_sel"><option value="all">全部页面</option></select>
+            </div>
+            <div class="filter-item">
+              <label for="wo_check_sel">故障类型</label>
+              <select id="wo_check_sel">
+                <option value="all">全部类型</option>
+                <option value="link">链接有效性</option>
+                <option value="soldout">售罄下架</option>
+                <option value="activity">活动时效</option>
+                <option value="image">图片加载</option>
+                <option value="consistency">图文一致性</option>
+                <option value="prize">互动奖品特效</option>
+              </select>
+            </div>
+            <div class="filter-bar-actions">
+              <button class="btn ghost sm" id="wo_reset" type="button">重置筛选</button>
+              <button class="btn sm" onclick="loadWork()">查询</button>
+              <span class="filter-count" id="wo_count"></span>
+              <span id="wo_batch_bar" style="display:none;align-items:center;gap:8px">
+                <span class="muted" id="wo_sel_count" style="font-size:13px">已选 0 项</span>
+                <button class="btn sm" onclick="batchRecheck()">批量复检</button>
+                <button class="btn sm gray" onclick="batchClose()">批量关闭</button>
+              </span>
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th style="width:32px"><input type="checkbox" id="wo_select_all" onchange="toggleAllWo(this.checked)"></th><th>问题</th><th>页面 / 位置</th><th>等级</th><th>问题项</th><th>负责人</th><th>状态</th><th style="white-space:nowrap">存在时长<span class="help-tip" style="margin-left:4px;width:14px;height:14px;font-size:10px">?<span class="help-pop"><span class="hp-title">存在时长</span>按问题创建时间<b>正向统计</b>已存在时长，用于了解问题积压情况：<br><b>灰 = 刚发现（4 小时内）</b><br><b>橙 = 存在较久（超过 4 小时）</b>。<br>正向计时，弱化紧迫感。</span></span></th><th>上次复检</th><th>操作</th></tr></thead>
+            <tbody id="wo_body"></tbody></table>
+          </div>
+          <div class="pagination">
+            <span class="total">共 <b id="wo_total">0</b> 条</span>
+            <button class="page-btn" disabled>‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn" disabled>›</button>
+            <span class="go-page">前往 <input type="number" min="1" value="1"> 页</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 通知记录 -->
+      <section class="panel" id="notify">
+        <div class="page-header">
+          <div class="ph-title"><span class="ph-bar"></span><h3>通知记录</h3></div>
+          <select id="nf_level" class="role-sel" onchange="loadNotify()" style="width:auto">
+            <option value="">全部等级</option><option value="critical">严重 P0</option>
+            <option value="warning">警告 P1</option><option value="notice">提示 P2</option></select>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>时间</th><th>任务</th><th>页面/位置</th><th>等级</th><th>通知人</th><th>渠道</th><th>状态</th></tr></thead>
+          <tbody id="notify_body"></tbody></table>
+        </div>
+        <p class="hint">规则：巡检产生 严重/警告/提示 异常时，自动派发至<b>该任务配置的对应等级通知人</b>，未单独配置则回退<b>全局默认</b>（设置中维护）。正常不通知。</p>
+      </section>
+
+      <!-- 运行日志 -->
+      <section class="panel" id="logs">
+        <div class="page-header">
+          <div class="ph-title"><span class="ph-bar"></span><h3>运行日志</h3></div>
+        </div>
+        <div class="tbl-wrap"><table><thead><tr><th>时间</th><th>级别</th><th>消息</th></tr></thead>
+          <tbody id="logs_body"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- 设置 -->
+    </div>
+  </div>
+</div>
+
+<!-- 模态 -->
+<div class="modal-mask" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal"><div class="mh"><b id="modal_title">标题</b><button class="x" onclick="closeModal()">×</button></div>
+    <div class="mb" id="modal_body"></div><div class="mf" id="modal_foot"></div></div>
+</div>
+<div class="toast" id="toast"></div>

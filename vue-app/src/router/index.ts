@@ -25,10 +25,8 @@ const LeadDashboard = () => import('@/views/lead/LeadDashboardView.vue')
 const LeadPool = () => import('@/views/lead/LeadPoolView.vue')
 const LeadScore = () => import('@/views/lead/LeadScoreView.vue')
 const OrderPurchaseOrders = () => import('@/views/order/OrderPurchaseOrdersView.vue')
-const InspectionOverview = () => import('@/views/inspection/InspectionOverviewView.vue')
-const InspectionRules = () => import('@/views/inspection/InspectionRulesView.vue')
-const InspectionTasks = () => import('@/views/inspection/InspectionTasksView.vue')
-const InspectionWorkorders = () => import('@/views/inspection/InspectionWorkordersView.vue')
+// AI 巡检平台（与共享快照 1:1 移植，独立全屏外壳，不套用工作台 AppLayout）
+const InspectionApp = () => import('@/views/inspection/InspectionApp.vue')
 const AgentSkills = () => import('@/views/agent/AgentSkillsView.vue')
 const AgentSkillCreate = () => import('@/views/agent/AgentSkillCreateView.vue')
 const AgentPermissions = () => import('@/views/agent/AgentPermissionsView.vue')
@@ -37,6 +35,12 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     component: () => import('@/views/LoginView.vue'),
+    meta: { public: true }
+  },
+  {
+    // 顶层独立路由：AI 智能巡检平台（全屏外壳，公开免登录）
+    path: '/inspection',
+    component: InspectionApp,
     meta: { public: true }
   },
   {
@@ -75,10 +79,10 @@ const routes: RouteRecordRaw[] = [
       { path: 'order/purchase-orders/:id', component: OrderPurchaseOrders, meta: { pageId: 'order.purchaseOrders', group: 'order' } },
 
       // AI 巡检平台
-      { path: 'inspection/overview',   component: InspectionOverview,   meta: { pageId: 'inspection.overview',   group: 'inspection' } },
-      { path: 'inspection/rules',      component: InspectionRules,      meta: { pageId: 'inspection.rules',      group: 'inspection' } },
-      { path: 'inspection/tasks',      component: InspectionTasks,      meta: { pageId: 'inspection.tasks',      group: 'inspection' } },
-      { path: 'inspection/workorders', component: InspectionWorkorders, meta: { pageId: 'inspection.workorders', group: 'inspection' } },
+      { path: 'inspection/overview',   redirect: '/inspection' },
+      { path: 'inspection/rules',      redirect: '/inspection' },
+      { path: 'inspection/tasks',      redirect: '/inspection' },
+      { path: 'inspection/workorders', redirect: '/inspection' },
 
       // Agent 入口（从用户菜单进入，不在侧栏显示）
       { path: 'agent/skills',         component: AgentSkills, meta: { pageId: 'agent.skills' } },
