@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAppStore } from '@/stores/app'
-import { allowPreviewAuth } from '@/config/runtimeMode'
+import { allowPreviewAuth, publicMode } from '@/config/runtimeMode'
 
 // 布局
 const AppLayout = () => import('@/components/AppLayout.vue')
@@ -116,6 +116,13 @@ const router = createRouter({
 // 全局导航守卫：未登录跳转 /login
 router.beforeEach(async (to) => {
   const appStore = useAppStore()
+
+  // 公开免登录模式：打开即进，登录页重定向到工作台首页，绝不弹登录
+  if (publicMode) {
+    if (!appStore.user) appStore.usePreviewSession('demo')
+    if (to.path === '/login') return { path: '/portal/home' }
+    return true
+  }
 
   if (to.path === '/login') {
     if (appStore.user) return '/portal/home'
